@@ -5,7 +5,7 @@ This package is the my-ford-service that processes all of your Alexa requests.  
 
 
 ## Setup
-This project requires you have [Node.js](https://nodejs.org/en/download/) and npm installed.  This version was developed and testing using Node version 15.5.1, npm 7.17.0 and Windows 10 (19042.1052).  You can check your vesrions by using the following command:
+This project requires you have [Node.js](https://nodejs.org/en/download/) and npm installed.  This version was developed and testing using Node version 15.5.1, npm 7.17.0 and Windows 10 (19042.1052).  You can check your versions by using the following command:
 ```
 node --version
 npm install npm@latest -g
@@ -60,7 +60,7 @@ You then need to run the ngrok service.  You can use [ngrok](https://dashboard.n
 ngrok http 8000
 ```
 Ngrok will display a bunch of information.  You will see a _Forwarding https address_ like "https://f00d0bad0042.ngrok.io" which is your domain.<p>
-**NOTE:** This domain will change everytime you reset ngrok if you are on the free plan, which means
+**NOTE:** This domain will change every time you reset ngrok if you are on the free plan, which means
 you will need to update and redeploy this skill.
 <br>
 **NOTE:**
