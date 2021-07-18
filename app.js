@@ -287,5 +287,5 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   // SECURITY: We are showing potentially user controlled data and potentially internal data.
   // TODO: Replace with logging API and just return 'friendly message'.
-  res.status(500).send(`<pre>Unhandled error, please report the following stacktrace at https://github.com/jamisonderek/ford-connect-sim/issues!\n\n${err.stack}</pre>`);
+  res.status(500).send(`<pre>Unhandled error, please report the following stacktrace at https://github.com/jamisonderek/my-ford-service/issues!\n\n${err.stack}</pre>`);
 });
