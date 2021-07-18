@@ -238,29 +238,54 @@ async function goodNight(req, res) {
     await Promise.all(checks).then((messages) => messages.join(' ')));
 }
 
+/**
+ * This is a wrapper for all of the async app calls, so exceptions get forwared on to the next
+ * handler.
+ *
+ * @param {*} fn the async function to wrap.
+ * @returns a wrapped function.
+ */
+function asyncAppWrapper(fn) {
+  if (process.env.NODE_ENV !== 'test') {
+    return (req, res, next) => {
+      fn(req, res, next).catch(next);
+    };
+  }
+
+  return (req, res, next) => { fn(req, res, next); };
+}
+
 app.get('/my-ford/start-vehicle',
-  async (req, res) => requestActionWithCheck(req, res, 'start vehicle', fordConnect.doStartEngine, fordConnect.checkStartEngine));
+  asyncAppWrapper(async (req, res) => requestActionWithCheck(req, res, 'start vehicle', fordConnect.doStartEngine, fordConnect.checkStartEngine)));
 
 app.get('/my-ford/lock-vehicle',
-  async (req, res) => requestActionWithCheck(req, res, 'lock vehicle', fordConnect.doLock, fordConnect.checkLock));
+  asyncAppWrapper(async (req, res) => requestActionWithCheck(req, res, 'lock vehicle', fordConnect.doLock, fordConnect.checkLock)));
 
 app.get('/my-ford/unlock-vehicle',
-  async (req, res) => requestActionWithCheck(req, res, 'unlock vehicle', fordConnect.doUnlock, fordConnect.checkUnlock));
+  asyncAppWrapper(async (req, res) => requestActionWithCheck(req, res, 'unlock vehicle', fordConnect.doUnlock, fordConnect.checkUnlock)));
 
 app.get('/my-ford/check-fuel',
-  async (req, res) => requestDetails(req, res, 'check fuel', vehicle.checkFuel));
+  asyncAppWrapper(async (req, res) => requestDetails(req, res, 'check fuel', vehicle.checkFuel)));
 
 app.get('/my-ford/check-plug',
-  async (req, res) => requestDetails(req, res, 'check plug', vehicle.checkPlug));
+  asyncAppWrapper(async (req, res) => requestDetails(req, res, 'check plug', vehicle.checkPlug)));
 
 app.get('/my-ford/charge-vehicle',
-  async (req, res) => requestCharge(req, res));
+  asyncAppWrapper(async (req, res) => requestCharge(req, res)));
 
 app.get('/my-ford/where-vehicle',
-  async (req, res) => whereVehicle(req, res));
+  asyncAppWrapper(async (req, res) => whereVehicle(req, res)));
 
 app.get('/my-ford/when-charging',
-  async (req, res) => whenCharging(req, res));
+  asyncAppWrapper(async (req, res) => whenCharging(req, res)));
 
 app.get('/my-ford/good-night',
-  async (req, res) => goodNight(req, res));
+  asyncAppWrapper(async (req, res) => goodNight(req, res)));
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  // SECURITY: We are showing potentially user controlled data and potentially internal data.
+  // TODO: Replace with logging API and just return 'friendly message'.
+  res.status(500).send(`<pre>Unhandled error, please report the following stacktrace at https://github.com/jamisonderek/ford-connect-sim/issues!\n\n${err.stack}</pre>`);
+});
